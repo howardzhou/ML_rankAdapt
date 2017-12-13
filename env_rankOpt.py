@@ -11,11 +11,13 @@ class SpecEnv_rankOpt(object):
         self.NTEST = NTEST
         self.NTRAIN = NTRAIN
         self.intd = interdist
-        self.y_data = np.zeros([self.NTRAIN,self.NAP,self.NUE])	# 
-        self.x_data = np.zeros([self.NTRAIN,self.NAP,self.NUE])	# distance to each AP
+        self.y_data = np.zeros([self.NTRAIN,self.NAP,self.NUE]) # 
+        # self.y_data = np.zeros([self.NTRAIN,self.NUE])  # 
+        self.x_data = np.zeros([self.NTRAIN,self.NAP,self.NUE]) # distance to each AP
 
-        self.y_test = np.zeros([self.NTEST,self.NAP,self.NUE])	# 
-        self.x_test = np.zeros([self.NTEST,self.NAP,self.NUE])	# distance to each AP
+        self.y_test = np.zeros([self.NTEST,self.NAP,self.NUE])  # 
+        # self.y_test = np.zeros([self.NTEST,self.NUE])  # 
+        self.x_test = np.zeros([self.NTEST,self.NAP,self.NUE])  # distance to each AP
 
         self.root = int(self.NAP**.5)
         self.AP = [(i+self.intd,j+self.intd) for i in range(0,self.root*(self.intd),self.intd) for j in range(0,self.root*(self.intd),self.intd)]
@@ -35,40 +37,33 @@ class SpecEnv_rankOpt(object):
         for t in range(self.NTRAIN):
             for nu in range(self.NUE):
                 thisDist = np.random.rand(2)*(self.root+2)*(self.intd)
-                dmin = 1000
-                didx = 0
+                dall = []
                 for na in range(self.NAP):
                     thisD = ((tmp[na][0]-thisDist[0])**2 + (tmp[na][1]-thisDist[1])**2)**(.5)
                     self.x_data[t][na][nu] = thisD
-                    if thisD<dmin:
-                        dmin = thisD
-                        didx = na
+                    dall.append(thisD)
                 # print(dall)
-                # idx1 = np.argsort(np.array([dall]))
+                idx1 = np.argsort(np.array([dall]))
                 # print(idx1[0][0])
                 # print(idx1[0][1])
                 # print(idx1)
-                # self.y_data[t][idx1[0][0]][nu] = 1
-                self.y_data[t][didx][nu] = 1
-                # self.y_data[t][idx1[0][1]][nu] = 1
+                self.y_data[t][idx1[0][0]][nu] = 1
+                # self.y_data[t][nu] = idx1[0][0]
+                self.y_data[t][idx1[0][1]][nu] = 1
+
         # Testing Dataset
         for t in range(self.NTEST):
             for nu in range(self.NUE):
                 thisDist = np.random.rand(2)*(self.root+2)*(self.intd)
-                # dall = []
-                dmin = 1000
-                ddix = 0
+                dall = []
                 for na in range(self.NAP):
                     thisD = ((tmp[na][0]-thisDist[0])**2 + (tmp[na][1]-thisDist[1])**2)**(.5)
                     self.x_test[t][na][nu] = thisD
-                    if thisD<dmin:
-                        dmin = thisD
-                        didx = na
-                    # dall.append(thisD)
-                # idx1 = np.argsort(np.array([dall]))
-                # self.y_test[t][idx1[0][0]][nu] = 1
-                self.y_test[t][didx][nu] = 1
-                # self.y_test[t][idx1[0][1]][nu] = 1
+                    dall.append(thisD)
+                idx1 = np.argsort(np.array([dall]))
+                self.y_test[t][idx1[0][0]][nu] = 1
+                # self.y_test[t][nu] = idx1[0][0]
+                self.y_test[t][idx1[0][1]][nu] = 1
 
         return self.x_data,self.y_data,self.x_test,self.y_test
 
@@ -144,16 +139,6 @@ class SpecEnv_rankOpt(object):
 
         return 'Finished'
 
-
-
-# NAP = 9
-# NUE = 30
-# interdist = 100
-# NTRAIN = 10000
-# NTEST = 1000
-# env = SpecEnv_rankOpt(NAP, NUE, NTRAIN, NTEST, interdist)
-# # the data, shuffled and split between train and test sets
-# x_train, y_train, x_test, y_test = env.topoInit()
 
 
 

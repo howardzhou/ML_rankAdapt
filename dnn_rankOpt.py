@@ -15,19 +15,20 @@ from keras.optimizers import RMSprop
 from env_rankOpt import SpecEnv_rankOpt
 from keras.activations import sigmoid
 import time
+import numpy as np
 
 # def my_sign(x):
 # 	return round(sigmoid(x))
 
 NAP = 9
-NUE = 30
+NUE = 100
 interdist = 100
 NTRAIN = 100000
 NTEST = 1000
 
 batch_size = 128
 num_classes = NAP*NUE
-epochs = 5
+epochs = 2
 
 st_env = time.time()
 
@@ -54,10 +55,10 @@ print(x_test.shape[0], 'test samples')
 # y_test = keras.utils.to_categorical(y_test, num_classes)
 
 model = Sequential()
-model.add(Dense(512, activation='relu', input_shape=(NAP*NUE,)))
+model.add(Dense(1024, activation='relu', input_shape=(NAP*NUE,)))
 model.add(Dropout(0.2))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.2))
+# model.add(Dense(512, activation='relu'))
+# model.add(Dropout(0.2))
 model.add(Dense(num_classes, activation='sigmoid'))
 
 model.summary()
@@ -72,6 +73,10 @@ history = model.fit(x_train, y_train,
                     verbose=1,
                     validation_data=(x_test, y_test))
 score = model.evaluate(x_test, y_test, verbose=0)
+prd_y = model.predict(x_test[0:3])
+print(np.round(prd_y))
+print(y_test[0:3])
+print(x_test[0:3])
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 et_all = time.time()
