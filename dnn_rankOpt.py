@@ -25,9 +25,9 @@ interdist = 100
 NTRAIN = 10000
 NTEST = 1000
 
-batch_size = 64
+batch_size = 128
 num_classes = NAP*NUE
-epochs = 3
+epochs = 20
 
 st_env = time.time()
 
@@ -62,7 +62,7 @@ model.add(Dense(num_classes, activation='sigmoid'))
 
 model.summary()
 
-model.compile(loss='binary_crossentropy',
+model.compile(loss='mean_squared_error', # mean_squared_error binary_crossentropy
               optimizer='adam',
               metrics=['accuracy'])
 
